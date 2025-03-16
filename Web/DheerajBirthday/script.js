@@ -45,7 +45,7 @@ document.addEventListener("keydown", (event) => {
     document.body.style.backgroundImage = `url(images/hbd.jpeg)`;
     video = document.createElement("video");
     video.controls = true;
-    video.height = "250";
+    video.height = "500";
     video.loop = true;
     video.autoplay = true;
     // video.muted = true;
@@ -57,5 +57,11 @@ document.addEventListener("keydown", (event) => {
     message.append(video);
     // message.textContent += "Happy Birthday Dheeraj"
     // document.body.innerHTML = "<video controls><source src="images/bdayvideo.mp4"></video>";
+    sorry = document.createElement("div");
+    sorry.textContent = "Sorry bro, i didnt have your picture";
+    sorry.id = "message";
+    sorry.style.top = "85vh";
+
+    container.insertBefore(sorry, message.nextSibling);
   }
 });
