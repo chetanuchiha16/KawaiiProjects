@@ -4,7 +4,7 @@ message = document.getElementById("message");
 
 message.textContent = "Press b to begin";
 let step = 0;
-document.addEventListener("keydown", (event) => {
+document.addEventListener("keyup", (event) => {
   if (step === 0 && event.key === "b") {
     document.body.style.backgroundImage = `url(images/welcome.jpg)`;
     audio = document.createElement("audio");
@@ -38,6 +38,10 @@ document.addEventListener("keydown", (event) => {
     message.textContent = "press g";
   } else if (step === 4 && event.key === "g") {
     document.body.style.backgroundImage = `url(images/garp.png)`;
+    step = 5;
+    message.textContent = "press b";
+  } else if (step === 5 && event.key === "b") {
+    document.body.style.backgroundImage = `url(images/bb.png)`;
     step = 6;
     message.textContent = "press v";
   } else if (step === 6 && event.key === "v") {
