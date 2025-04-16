@@ -53,8 +53,10 @@ void mergeSort(int arr[], int low, int high) {
 void merge(int arr[], int low, int mid, int high) {
   int leftSize = mid - low + 1;
   int rightSize = high - mid;
-  int leftArray[leftSize];
-  int rightArray[rightSize];
+  // int leftArray[leftSize];
+  // int rightArray[rightSize];
+  int* leftArray = (int*)malloc(leftSize * sizeof(int));
+  int* rightArray = (int*)malloc(leftSize * sizeof(int));
 
   for (int i = 0; i < leftSize; i++) {
     leftArray[i] = arr[low + i];
@@ -84,4 +86,7 @@ void merge(int arr[], int low, int mid, int high) {
   while (r < rightSize) {
     arr[i++] = rightArray[r++];
   }
+  free(leftArray);
+  free(rightArray);
+
 }
