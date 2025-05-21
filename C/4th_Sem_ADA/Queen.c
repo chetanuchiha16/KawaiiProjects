@@ -3,65 +3,53 @@
 
 #define N 4
 
-// Chessboard representation
-int chessboard[N][N];
-
 // Function to print the current state of the chessboard
-void displayBoard() {
+void displayBoard(int board[N][N]) {
     for (int row = 0; row < N; row++) {
         for (int col = 0; col < N; col++) {
-            printf("%d ", chessboard[row][col]);
+            printf("%d ", board[row][col]);
         }
         printf("\n");
     }
 }
 
 // Function to check if placing a queen at (row, col) is safe
-bool isPositionSafe(int row, int col) {
-    // Check left side of the current row
+bool isPositionSafe(int board[N][N], int row, int col) {
+    // Check left row
     for (int i = 0; i < col; i++) {
-        if (chessboard[row][i]) {
-            return false;
-        }
+        if (board[row][i]) return false;
     }
 
-    // Check upper left diagonal
+    // Check upper-left diagonal
     for (int i = row, j = col; i >= 0 && j >= 0; i--, j--) {
-        if (chessboard[i][j]) {
-            return false;
-        }
+        if (board[i][j]) return false;
     }
 
-    // Check lower left diagonal
+    // Check lower-left diagonal
     for (int i = row, j = col; i < N && j >= 0; i++, j--) {
-        if (chessboard[i][j]) {
-            return false;
-        }
+        if (board[i][j]) return false;
     }
 
     return true;
 }
 
-// Recursive utility to solve N-Queens using backtracking
-bool solveNQueensUtil(int col) {
-    // All queens are placed
+// Recursive utility to solve N-Queens
+bool solveNQueensUtil(int board[N][N], int col) {
     if (col >= N) {
-        displayBoard();
+        displayBoard(board);
         printf("\n");
         return true;
     }
 
     bool hasSolution = false;
 
-    // Try placing queen in each row of the current column
     for (int row = 0; row < N; row++) {
-        if (isPositionSafe(row, col)) {
-            chessboard[row][col] = 1; // Place queen
+        if (isPositionSafe(board, row, col)) {
+            board[row][col] = 1;
 
-            // Recur to place rest of the queens
-            hasSolution = solveNQueensUtil(col + 1) || hasSolution;
+            hasSolution = solveNQueensUtil(board, col + 1) || hasSolution;
 
-            chessboard[row][col] = 0; // Backtrack
+            board[row][col] = 0; // Backtrack
         }
     }
 
@@ -70,7 +58,9 @@ bool solveNQueensUtil(int col) {
 
 // Main function to initiate solving
 void solveNQueens() {
-    if (!solveNQueensUtil(0)) {
+    int board[N][N] = {0}; // Now local to this function 🫶
+
+    if (!solveNQueensUtil(board, 0)) {
         printf("No solution exists\n");
     }
 }
