@@ -1,35 +1,51 @@
 #include <stdio.h>
 #define MAX 10
-int s[MAX], x[MAX];
-int d, n, i, sum = 0;
-void sumofsub(int p, int k, int r) {
-  int i;
-  x[k] = 1;
 
-  if ((p + s[k]) == d) {
+void sumOfSubsets(int set[], int include[], int targetSum, int numElements,
+                  int currSum, int currIndex, int remainingSum) {
+  include[currIndex] = 1;
+
+  if ((currSum + set[currIndex]) == targetSum) {
     printf("{\t");
-    for (i = 1; i <= k; i++)
-      if (x[i] == 1) printf("%d\t", s[i]);
-    printf("}");
-    printf("\n");
-  } else if (p + s[k] + s[k + 1] <= d)
-    sumofsub(p + s[k], k + 1, r - s[k]);
-  if ((p + r - s[k] >= d) && (p + s[k + 1] <= d)) {
-    x[k] = 0;
-    sumofsub(p, k + 1, r - s[k]);
+    for (int i = 1; i <= currIndex; i++)
+      if (include[i] == 1) printf("%d\t", set[i]);
+    printf("}\n");
+  } else if ((currSum + set[currIndex] + set[currIndex + 1]) <= targetSum) {
+    sumOfSubsets(set, include, targetSum, numElements, currSum + set[currIndex],
+                 currIndex + 1, remainingSum - set[currIndex]);
+  }
+
+  if ((currSum + remainingSum - set[currIndex] >= targetSum) &&
+      (currSum + set[currIndex + 1] <= targetSum)) {
+    include[currIndex] = 0;
+    sumOfSubsets(set, include, targetSum, numElements, currSum, currIndex + 1,
+                 remainingSum - set[currIndex]);
   }
 }
+
 int main() {
-  printf("Enter the number of elements in a set\n");
-  scanf("%d", &n);
-  printf("Enter the set  elements in increasing order:\n");
-  for (i = 1; i <= n; i++) scanf("%d", &s[i]);
-  printf("Enter the sum value\n");
-  scanf("%d", &d);
-  for (i = 1; i <= n; i++) sum = sum + s[i];
-  if (sum < d)
+  int set[MAX], include[MAX];
+  int numElements, targetSum, totalSum = 0;
+
+  printf("Enter the number of elements in the set:\n");
+  scanf("%d", &numElements);
+
+  printf("Enter the set elements in increasing order:\n");
+  for (int i = 1; i <= numElements; i++) {
+    scanf("%d", &set[i]);
+  }
+
+  printf("Enter the sum value:\n");
+  scanf("%d", &targetSum);
+
+  for (int i = 1; i <= numElements; i++) {
+    totalSum += set[i];
+  }
+
+  if (totalSum < targetSum) {
     printf("\nNo subset possible\n");
-  else
-    sumofsub(0, 1, sum);
+  } else {
+    sumOfSubsets(set, include, targetSum, numElements, 0, 1, totalSum);
+  }
   return 0;
 }

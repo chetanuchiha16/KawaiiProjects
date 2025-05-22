@@ -1,84 +1,81 @@
-#include<stdio.h>
-int cost[10][10];
-int i,j,n,mincost=0;
-int union1(int i,int j,int parent[10]);
-int find(int i,int parent[10]);
-int Kruskal(int cost[10][10],int n,int mincost);
-int main()
-{
-printf("Enter the no. of vertices:\n");
-scanf("%d",&n);
- printf ("Enter cost matrix\n");
-for(i=1;i<=n;i++)
-{
-	for(j=1;j<=n;j++)
-	{
-		scanf("%d",&cost[i][j]);
-	}
-}
-printf("The entered cost matrix is\n");
-for(i=1;i<=n;i++)
-{
-	for(j=1;j<=n;j++)
-	{
-		printf("%d\t",cost[i][j]);
-	}
-	printf("\n");
+#include <stdio.h>
+
+#define MAX_VERTICES 10
+#define INF 999
+
+int find(int vertex, int parent[MAX_VERTICES]);
+int unionSets(int u, int v, int parent[MAX_VERTICES]);
+int kruskal(int cost[MAX_VERTICES][MAX_VERTICES], int numVertices);
+
+int main() {
+  int cost[MAX_VERTICES][MAX_VERTICES];
+  int numVertices, minCost;
+
+  printf("Enter the number of vertices:\n");
+  scanf("%d", &numVertices);
+
+  printf("Enter cost matrix\n");
+  for (int i = 1; i <= numVertices; i++) {
+    for (int j = 1; j <= numVertices; j++) {
+      scanf("%d", &cost[i][j]);
+    }
+  }
+
+  printf("The entered cost matrix is\n");
+  for (int i = 1; i <= numVertices; i++) {
+    for (int j = 1; j <= numVertices; j++) {
+      printf("%d\t", cost[i][j]);
+    }
+    printf("\n");
+  }
+
+  printf("Kruskal's MST edges and cost are:\n");
+  minCost = kruskal(cost, numVertices);
+  printf("\nMST cost is %d\n", minCost);
+  printf("----------\n");
+
+  return 0;
 }
 
-printf("Kruskal's MST edges and cost are \n");
-mincost=Kruskal(cost,n,mincost);
-printf("\nMST cost is %d\n", mincost);
-printf("----------");
+int kruskal(int cost[MAX_VERTICES][MAX_VERTICES], int numVertices) {
+  int parent[MAX_VERTICES] = {0};
+  int numEdges = 1, minCost = 0;
+
+  while (numEdges < numVertices) {
+    int min = INF, a = 0, b = 0, u = 0, v = 0;
+
+    for (int i = 1; i <= numVertices; i++) {
+      for (int j = 1; j <= numVertices; j++) {
+        if (cost[i][j] < min) {
+          min = cost[i][j];
+          a = u = i;
+          b = v = j;
+        }
+      }
+    }
+
+    u = find(u, parent);
+    v = find(v, parent);
+
+    if (unionSets(u, v, parent)) {
+      printf("%d) min edge is (%d,%d) and cost is %d\n", numEdges, a, b, min);
+      minCost += min;
+      numEdges++;
+    }
+    cost[a][b] = cost[b][a] = INF;
+  }
+  return minCost;
 }
 
-	 int Kruskal(int cost[10][10],int n,int mincost)
-	{
-		int ne=1,min;
-		int a=0,b=0,u=0,v=0;
-		int parent[10];
-		while(ne<n)
-		{
-			min=999;
-			for(int i=1;i<=n;i++)
-			{
-				for(int j=1;j<=n;j++)
-				{
-					if(cost[i][j]<min)
-					{
-						min=cost[i][j];
-						a=u=i;
-						b=v=j;
-					}
-				}
-			}
-			u=find(u,parent);
-			v=find(v,parent);
-			if(union1(u,v,parent)!=0)
-			{
-				printf("%d) min edge is ",ne++);
-				printf("(%d,%d) and cost is %d\n",a,b,min);
-				mincost+=min;
-				parent[v]=u;
-			}
-			cost[a][b]=cost[b][a]=999;
-		}
-	return mincost;
-			
-	}
- int find(int i,int parent[10])
-{
-	while(parent[i]!=0)
-		i=parent[i];
-	return i;
+int find(int vertex, int parent[MAX_VERTICES]) {
+  while (parent[vertex] != 0) vertex = parent[vertex];
+  return vertex;
 }
- int union1(int i,int j,int parent[10])
-{
-	if(i!=j)
-	{
-		parent[j]=i;
-		return 1;
-	}
-	else
-		return 0;
+
+int unionSets(int u, int v, int parent[MAX_VERTICES]) {
+  if (u != v) {
+    parent[v] = u;
+    return 1;
+  }
+  return 0;
 }

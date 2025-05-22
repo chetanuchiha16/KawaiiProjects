@@ -1,76 +1,94 @@
 #include <stdio.h>
-void Dij(int cost[10][10], int dist[10], int sv, int n, int path[10],
-         int visited[10]);
-void PrintPath(int sv, int n, int dist[10], int path[10], int visited[10]);
+
+#define MAX_VERTICES 10
+#define INF 999
+
+void dijkstra(int cost[MAX_VERTICES][MAX_VERTICES], int distance[MAX_VERTICES],
+              int source, int numVertices, int prev[MAX_VERTICES],
+              int visited[MAX_VERTICES]);
+void printPaths(int source, int numVertices, int distance[MAX_VERTICES],
+                int prev[MAX_VERTICES], int visited[MAX_VERTICES]);
+
 int main() {
-  int i, j, sv, n;
-  int dist[10], visited[10];
-  int cost[10][10], path[10];
+  int i, j, source, numVertices;
+  int distance[MAX_VERTICES], visited[MAX_VERTICES];
+  int cost[MAX_VERTICES][MAX_VERTICES], prev[MAX_VERTICES];
+
   printf("DIJKSTRA\n");
-  printf("Enter the no. of vertices:\n");
-  scanf("%d", &n);
+  printf("Enter the number of vertices:\n");
+  scanf("%d", &numVertices);
+
   printf("Enter cost matrix\n");
-  for (i = 1; i <= n; i++) {
-    for (j = 1; j <= n; j++) {
+  for (i = 1; i <= numVertices; i++) {
+    for (j = 1; j <= numVertices; j++) {
       scanf("%d", &cost[i][j]);
     }
   }
+
   printf("The entered cost matrix is\n");
-  for (i = 1; i <= n; i++) {
-    for (j = 1; j <= n; j++) {
+  for (i = 1; i <= numVertices; i++) {
+    for (j = 1; j <= numVertices; j++) {
       printf("%d\t", cost[i][j]);
     }
     printf("\n");
   }
-  printf("Enter source\n");
-  scanf("%d", &sv);
-  Dij(cost, dist, sv, n, path, visited);
-  PrintPath(sv, n, dist, path, visited);
-  printf("-----------\n");
-}
-void Dij(int cost[10][10], int dist[10], int sv, int n, int path[10],
-         int visited[10]) {
-  int count = 2, min, v = 0;
-  for (int i = 1; i <= n; i++) {
-    visited[i] = 0;
-    dist[i] = cost[sv][i];
-    if (cost[sv][i] == 999)
-      path[i] = 0;
-    else
-      path[i] = sv;
-  }
-  visited[sv] = 1;
-  while (count <= n) {
-    min = 999;
-    for (int w = 1; w <= n; w++)
 
-      if ((dist[w] < min) && (visited[w] == 0)) {
-        min = dist[w];
-        v = w;
+  printf("Enter source vertex:\n");
+  scanf("%d", &source);
+
+  dijkstra(cost, distance, source, numVertices, prev, visited);
+  printPaths(source, numVertices, distance, prev, visited);
+
+  printf("-----------\n");
+  return 0;
+}
+
+void dijkstra(int cost[MAX_VERTICES][MAX_VERTICES], int distance[MAX_VERTICES],
+              int source, int numVertices, int prev[MAX_VERTICES],
+              int visited[MAX_VERTICES]) {
+  int count = 2, minDist, nextVertex = 0;
+  for (int i = 1; i <= numVertices; i++) {
+    visited[i] = 0;
+    distance[i] = cost[source][i];
+    if (cost[source][i] == INF)
+      prev[i] = 0;
+    else
+      prev[i] = source;
+  }
+  visited[source] = 1;
+
+  while (count <= numVertices) {
+    minDist = INF;
+    for (int v = 1; v <= numVertices; v++) {
+      if ((distance[v] < minDist) && (visited[v] == 0)) {
+        minDist = distance[v];
+        nextVertex = v;
       }
-    visited[v] = 1;
+    }
+    visited[nextVertex] = 1;
     count++;
-    for (int w = 1; w <= n; w++) {
-      if ((dist[w] > dist[v] + cost[v][w])) {
-        dist[w] = dist[v] + cost[v][w];
-        path[w] = v;
+    for (int v = 1; v <= numVertices; v++) {
+      if (distance[v] > distance[nextVertex] + cost[nextVertex][v]) {
+        distance[v] = distance[nextVertex] + cost[nextVertex][v];
+        prev[v] = nextVertex;
       }
     }
   }
 }
-void PrintPath(int sv, int n, int dist[10], int path[10], int visited[10]) {
-  for (int w = 1; w <= n; w++) {
-    if (visited[w] == 1 && w != sv) {
-      printf("\nShortest distance between ");
-      printf("%d -> %d  is %d\n", sv, w, dist[w]);
-      int t = path[w];
-      printf("The path is");
-      printf("  %d", w);
-      while (t != sv) {
-        printf("<->%d", t);
-        t = path[t];
+
+void printPaths(int source, int numVertices, int distance[MAX_VERTICES],
+                int prev[MAX_VERTICES], int visited[MAX_VERTICES]) {
+  for (int v = 1; v <= numVertices; v++) {
+    if (visited[v] == 1 && v != source) {
+      printf("\nShortest distance between %d -> %d is %d\n", source, v,
+             distance[v]);
+      int t = prev[v];
+      printf("The path is  %d", v);
+      while (t != source) {
+        printf(" <-> %d", t);
+        t = prev[t];
       }
-      printf("<->%d \n", sv);
+      printf(" <-> %d \n", source);
     }
   }
 }
